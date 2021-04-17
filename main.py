@@ -131,3 +131,21 @@ doc = nlp("I saw the man with the telescope.")
 span = doc[2:5]
 print(identify_head_of_a_span_in_form_of_string("the man"))
 
+# function 5
+def get_parts_of_sentence(sentence):
+    doc = nlp(sentence)
+    root = None
+    for token in doc: # get root
+        if token.dep_ == "ROOT":
+            root = token
+            break
+    for child in root.children:
+        if child.dep_ == "dobj":
+            pass
+        else if child.dep_ == "nsubj":
+            pass
+        else if child.dep_ == "iobj":
+            pass
+
+print("function 5")
+print(get_parts_of_sentence("I saw the man with a telescope."))

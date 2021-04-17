@@ -2,6 +2,11 @@ import spacy
 
 nlp = spacy.load("en_core_web_sm")
 
+def is_generator_empty(generator):
+    for element in generator:
+        return False
+    return True
+
 # function 1
 def get_dependency_paths_from_root(sentences):
     doc = nlp(sentences)  # get the doc object
@@ -84,6 +89,33 @@ for subtrees in subtrees_of_sentences:
     for subtree in subtrees:
         print(subtree)
 
+def check_if_subtree(sentence, subtree):
+    subtree = set(subtree)
+    doc = nlp(sentence)  # get the doc object
+
+    subtrees_array = []
+    subtree_index = 0
+    for token in doc:
+        if not is_generator_empty(token.children):
+            subtrees_array.append([])
+            queue = [token]
+            while len(queue) > 0:
+                current_node = queue.pop(0)
+                for child in current_node.children:
+                    subtrees_array[subtree_index].append(child.text)
+                    queue.append(child)
+            subtree_index += 1
+    for tree in subtrees_array:
+        print(tree)
+        tree = set(tree)
+        if tree == subtree:
+            return True
+    return False
+
+print("function 3")
+print(check_if_subtree("I saw the man with a telescope.", ['I', 'with', '.', 'the', 'telescope', 'a']))
+
+
 # function 4
 def identirfy_head_of_a_span(span):
     return span.root
@@ -92,3 +124,4 @@ print("function 4")
 doc = nlp("I saw the man with the telescope.")
 span = doc[2:5]
 print(identirfy_head_of_a_span(span))
+

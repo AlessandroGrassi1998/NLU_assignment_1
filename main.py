@@ -120,8 +120,14 @@ print(check_if_subtree("I saw the man with a telescope.", ['I', 'with', '.', 'th
 def identirfy_head_of_a_span(span):
     return span.root
 
+def identify_head_of_a_span_in_form_of_string(span):
+    doc = nlp(span)
+    for token in doc:
+        if token.dep_ == "ROOT":
+            return token.text
+    return None
 print("function 4")
 doc = nlp("I saw the man with the telescope.")
 span = doc[2:5]
-print(identirfy_head_of_a_span(span))
+print(identify_head_of_a_span_in_form_of_string("the man"))
 

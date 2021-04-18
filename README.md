@@ -1,5 +1,10 @@
 # NLU Assignment 1
 
+## Student
+* Name: Alessandro
+* Surname: Grassi
+* Student number: 221224
+
 ## Requirements
 
 The main.py script requires python, spacy and its english models to be installed.
@@ -171,3 +176,5 @@ def bfs(token):
             queue.append(child)
     return tree_array
 ```
+# how to test
+When the main.py script is executed in the shell you will be asket to write a sentence to analyze. Before the fourth function you will have to write a span to analyze, the output of the function is already provided in a readable way.

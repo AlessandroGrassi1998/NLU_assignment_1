@@ -3,32 +3,23 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 
+def bfs(token):
+    tree_array = []
+    queue = [token]
+    while len(queue) > 0:
+        current_node = queue.pop(0)
+        tree_array.append(current_node)
+        for child in current_node.children:
+            queue.append(child)
+    return tree_array
+
 def is_generator_empty(generator):
     for element in generator:
         return False
     return True
 
+
 # function 1
-
-
-def get_dependency_paths_from_root(sentences):
-    doc = nlp(sentences)  # get the doc object
-    sentences = list(doc.sents)  # used to handle multiple sentences
-    sentences_in_form_of_dependencies = []
-    sentence_index = 0
-    for sentence in sentences:  # iterate foreach sentence
-        sentences_in_form_of_dependencies.append([])
-        queue = [sentence.root]
-        while len(queue) > 0:
-            current_node = queue.pop(0)
-            sentences_in_form_of_dependencies[sentence_index].append(
-                current_node.dep_ + " ==> " + [child.dep_ + "->" + child.text for child in current_node.children].__str__())
-            for child in current_node.children:
-                queue.append(child)
-        sentence_index += 1
-    return sentences_in_form_of_dependencies
-
-
 def get_dependency_paths(sentences):
     doc = nlp(sentences)  # get the doc object
     sentences = list(doc.sents)  # used to handle multiple sentences
@@ -64,23 +55,19 @@ def get_subtree_of_dependents_given_a_token(sentences):
         subtrees.append([])
         token_index = 0
         for token in sentence:
-            subtrees[sentence_index].append([])
-            queue = [token]
-            while len(queue) > 0:
-                current_node = queue.pop(0)
-                subtrees[sentence_index][token_index].append(
-                    current_node.text + " ==> " + [child.text for child in current_node.children].__str__())
-                for child in current_node.children:
-                    queue.append(child)
-            token_index += 1
+            subtrees[sentence_index].append([subtree_token.text for subtree_token in token.subtree])
         sentence_index += 1
     return subtrees
 
+
+for sentence in get_subtree_of_dependents_given_a_token("I saw a man with a telescope."):
+    for token in sentence:
+        print(token)
+
+
 # function 3
-
-
 def check_if_subtree(sentence, subtree):
-    subtree = set(subtree)
+    subtree.sort()
     doc = nlp(sentence)  # get the doc object
 
     subtrees_array = []
@@ -96,16 +83,10 @@ def check_if_subtree(sentence, subtree):
                     queue.append(child)
             subtree_index += 1
     for tree in subtrees_array:
-        tree = set(tree)
+        tree.sort()
         if tree == subtree:
             return True
     return False
-
-# alternative to function 4 with a span obj as input
-
-
-def identirfy_head_of_a_span(span):
-    return span.root
 
 
 # function 4
@@ -115,6 +96,12 @@ def identify_head_of_a_span_in_form_of_string(span):
         if token.dep_ == "ROOT":
             return token.text
     return None
+
+# alternative to function 4 with a span obj as input
+
+
+def identirfy_head_of_a_span(span):
+    return span.root
 
 
 # function 5
@@ -136,18 +123,9 @@ def get_parts_of_sentence(sentence):
     return parts_of_sentence
 
 
-def bfs(token):
-    tree_array = []
-    queue = [token]
-    while len(queue) > 0:
-        current_node = queue.pop(0)
-        tree_array.append(current_node)
-        for child in current_node.children:
-            queue.append(child)
-    return tree_array
 
-
-sentence = input("Write a sentence to analyze: ")
+# sentence = input("Write a sentence to analyze: ")
+sentence = "I saw a man with a telescope."
 
 print("function 1")
 dependency_paths_sentences = get_dependency_paths(
@@ -168,12 +146,15 @@ print("\n\n")
 print("function 3")
 print(check_if_subtree("I saw the man with a telescope.",
       ['I', 'with', '.', 'the', 'telescope', 'a']))
+print(check_if_subtree("I saw the man with a telescope.",
+      ['I', 'man', 'with', '.', 'the', 'telescope', 'a']))
 print("\n\n")
 
 print("function 4")
 doc = nlp("I saw the man with the telescope.")
 span = doc[2:5]
-span = input("Write a portion of a sentence to be analyzed: ")
+span = "man with a"
+# span = input("Write a portion of a sentence to be analyzed: ")
 print(identify_head_of_a_span_in_form_of_string(span))
 print("\n\n")
 
